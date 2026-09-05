@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="main">
+
+        <div class="sidebar">
+            <h2>📚 Library</h2>
+            <nav class="navbook">
+                <a href="index.html" class="nav-link">🏠 Dashboard</a>
+                <a href="books.html" class="nav-link">📚 Books</a>
+                <a href="add-book.html" class="nav-link">➕ Add Book</a>
+                <a href="ddc.html" class="nav-link">🗂️ DDC Categories</a>
+            </nav>
+        </div>
+        <div class="content">
+            <div>
+
+                <h1>Books</h1>
+                <input type="search" name="search" id="search-input" placeholder="Search from our library">
+
+                <button id="search-button">Search book</button>
+
+                <div>
+                    <table id="book-table">
+                        <tr>
+                            <th>Title</th>
+                            <th>DDC Number</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

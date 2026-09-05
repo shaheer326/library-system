@@ -1,0 +1,81 @@
+body{
+    margin: 0;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    background-color: rgb(255, 244, 141);
+}
+
+.main{
+    display: flex;
+}
+
+.sidebar{
+    background-color: rgb(5, 0, 77);
+    width: 220px;
+    height: 100dvh;
+    overflow: auto;
+}
+.sidebar h2{
+    text-align: center;
+    color: white;
+    padding-bottom: 20px;
+}
+.nav-link {
+    display: block;
+    text-decoration: none;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+.nav-link:hover{
+    color: rgb(0, 92, 172);
+}
+#heading{
+    font-size: 25px;
+    text-align: center;
+    padding-bottom: 30px;
+}
+
+.card{
+    background-color: rgb(251, 237, 255);
+    padding: 20px;
+    border:  black;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    flex: 1;
+    height: 150px;
+    width: 150px;
+}
+.cards{
+    display: flex;
+    gap: 20px;
+    text-align: center;
+    justify-content: center;
+}
+.content {
+    flex: 1;
+    padding: 30px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+button{
+    background-color: rgb(0, 92, 172);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    height: 30px;
+    font-size: 15px;
+}
+#search-input{
+    height: 30px;
+    border: none;
+    border-radius: 12px;
+}
