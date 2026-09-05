@@ -130,3 +130,7 @@ input:hover {
     background-color: rgb(246, 255, 115);
     color: black;
 }
+.content2 a{
+    text-decoration: none;
+    color: black;
+}
