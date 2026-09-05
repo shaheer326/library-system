@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {
     getFirestore,
     collection,
@@ -7,8 +7,12 @@ import {
     deleteDoc,
     doc,
     orderBy,
-    query
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    query,
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import{
+    getAuth,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js"
 
 const firebaseConfig = {
     apiKey: "AIzaSyClEatbNjcmYC-ejxpjFIwmk1Ix3TX_oOU",
@@ -20,6 +24,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
 const book = document.getElementById("book-title");

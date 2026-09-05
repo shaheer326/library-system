@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="main">
+
+        <div class="content2">
+            <form id="login-form">
+                <h2>Library Login</h2>
+                <input type="email" id="email" placeholder="enter your email">
+                <input type="password" id="password" placeholder="enter your password">
+                <button>Login</button>
+            </form>
+        </div>
+
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyClEatbNjcmYC-ejxpjFIwmk1Ix3TX_oOU",
+            authDomain: "school-library-4b6ed.firebaseapp.com",
+            projectId: "school-library-4b6ed",
+            storageBucket: "school-library-4b6ed.firebasestorage.app",
+            messagingSenderId: "72188981445",
+            appId: "1:72188981445:web:7ff83a2501e22a920fc0ac"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.href = "books.html";
+            } catch (error) {
+                alert("Login failed: " + error.message);
+            }
+        });
+    </script>
+</body>
+
+</html>
