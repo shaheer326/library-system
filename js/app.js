@@ -9,7 +9,7 @@ import {
     orderBy,
     query,
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import{
+import {
     getAuth,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js"
@@ -31,6 +31,7 @@ const book = document.getElementById("book-title");
 const ddc = document.getElementById("ddc-number");
 const form = document.getElementById("add-book-form");
 const bookTable = document.getElementById("book-table");
+const recentbooks = document.getElementById("recent-books")
 
 if (form) {
     form.addEventListener("submit", async function (event) {
@@ -98,9 +99,20 @@ const bookQuery = query(collection(db, "books"), orderBy("ddc"))
 
 const booksSnapshot = await getDocs(bookQuery);
 
+const totalbooks = document.getElementById("total-books")
+
 console.log("Number of books:", booksSnapshot.size);
 
+if (totalbooks) {
+    totalbooks.textContent = booksSnapshot.size
+}
+
 const books = [];
+
+booksSnapshot.forEach((doc) => {
+    books.push({ id: doc.id, ...doc.data() });
+});
+
 
 if (bookTable) {
 
@@ -125,28 +137,41 @@ if (bookTable) {
 
             let actioncell = document.createElement("td")
 
-            let deletebutton = document.createElement("button");
-            deletebutton.innerHTML = "Delete";
-            deletebutton.addEventListener("click", async function () {
-                await deleteDoc(doc(db, "books", data.id));
-                row.remove()
-            });
+            if (isAdmin) {
+                let deletebutton = document.createElement("button");
+                deletebutton.innerHTML = "Delete";
+                deletebutton.addEventListener("click", async function () {
+                    await deleteDoc(doc(db, "books", data.id));
+                    row.remove()
+                });
+                actioncell.appendChild(deletebutton);
+            }
 
             row.appendChild(bookcell);
             row.appendChild(ddccell);
             row.appendChild(categorycell);
             row.appendChild(actioncell);
-            actioncell.appendChild(deletebutton);
             bookTable.appendChild(row);
         });
 
     }
 
-    booksSnapshot.forEach((doc) => {
-        books.push({ id: doc.id, ...doc.data() });
-    });
+    let isAdmin = false;
 
-    displayBooks(books);
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const token = await user.getIdTokenResult();
+            isAdmin = token.claims.admin === true;
+        }
+
+        const addBookLink = document.getElementById("add-book-link");
+
+        if (!isAdmin && addBookLink) {
+            addBookLink.style.display = "none";
+        }
+
+        displayBooks(books);
+    });
 
     const input = document.getElementById("search-input")
     const button = document.getElementById("search-button")
@@ -161,4 +186,25 @@ if (bookTable) {
         displayBooks(filteredBooks);
     })
 
+}
+if (recentbooks) {
+    books.slice(0, 5).forEach((data) => {
+
+        let recentrow = document.createElement("tr");
+
+        let recenttitle = document.createElement("td");
+        recenttitle.textContent = data.title;
+
+        let recentddc = document.createElement("td");
+        recentddc.textContent = data.ddc;
+
+        let recentcategory = document.createElement("td");
+        recentcategory.textContent = data.category;
+
+        recentrow.appendChild(recenttitle);
+        recentrow.appendChild(recentddc);
+        recentrow.appendChild(recentcategory);
+
+        recentbooks.appendChild(recentrow);
+    });
 }

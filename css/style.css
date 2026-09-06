@@ -1,19 +1,23 @@
 body {
     margin: 0;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    background-color: rgb(255, 244, 141);
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(222, 229, 231);
 }
 
 .main {
     display: flex;
+    min-height: 100vh;
 }
 
 .sidebar {
-    background-color: rgb(5, 0, 77);
-    width: 220px;
-    height: 100dvh;
+    background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRhSSpOzxBWZvzkEkSoO2252LJcTCZIJLXi5W33fOQCw&s=10);
+    width: 250px;
+    min-height: 100vh;
     overflow: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
 }
+
 
 .sidebar h2 {
     text-align: center;
@@ -25,12 +29,13 @@ body {
     display: block;
     text-decoration: none;
     color: white;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 14px;
+    margin: 5px 12px;
+    border-radius: 10px
 }
 
 .nav-link:hover {
-    color: rgb(0, 92, 172);
+    background-color: rgb(0, 92, 172);
 }
 
 #heading {
@@ -40,14 +45,12 @@ body {
 }
 
 .card {
-    background-color: rgb(251, 237, 255);
+    background-color: rgb(255, 255, 255);
     padding: 20px;
-    border: black;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     flex: 1;
-    height: 150px;
-    width: 150px;
 }
 
 .cards {
@@ -59,19 +62,25 @@ body {
 
 .content {
     flex: 1;
-    padding: 30px;
+    padding: 25px;
+    margin-bottom: 30px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: rgb(246, 255, 115);
+    background-color: rgb(255, 255, 255);
     border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-th,
+th{
+    background-color: #bbbcbd;
+    color: black;
+    padding: 14px;
+}
 td {
-    padding: 10px;
+    padding: 15px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
@@ -80,9 +89,10 @@ button {
     background-color: rgb(5, 0, 77);
     color: white;
     border: none;
-    border-radius: 12px;
-    height: 30px;
+    border-radius: 8px;
+    height: 35px;
     font-size: 15px;
+    padding: 10px;
 }
 
 button:hover {
@@ -123,14 +133,21 @@ input:hover {
     margin-top: 30px;
     width: 250px;
 }
-.content2 button{
+
+.content2 button {
     font-size: 16px;
     text-align: center;
     margin-top: 20px;
     background-color: rgb(246, 255, 115);
     color: black;
 }
-.content2 a{
+
+.content2 a {
     text-decoration: none;
     color: black;
+}
+
+img{
+    width: 100%;
+    height: auto;
 }
