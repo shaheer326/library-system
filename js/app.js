@@ -1,3 +1,5 @@
+console.log("NEW APP.JS LOADED");
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {
     getFirestore,
@@ -99,6 +101,8 @@ const bookQuery = query(collection(db, "books"), orderBy("ddc"))
 
 const booksSnapshot = await getDocs(bookQuery);
 
+console.log("Reached auth section");
+
 const totalbooks = document.getElementById("total-books")
 
 console.log("Number of books:", booksSnapshot.size);
@@ -115,6 +119,7 @@ booksSnapshot.forEach((doc) => {
 
 
 if (bookTable) {
+    console.log("Book table found:", bookTable);
 
     function displayBooks(booksToDisplay) {
 
@@ -123,6 +128,7 @@ if (bookTable) {
         });
 
         booksToDisplay.forEach((data) => {
+            console.log("Displaying:", data);
 
             let row = document.createElement("tr")
 
@@ -156,6 +162,8 @@ if (bookTable) {
 
     }
 
+    console.log("About to start auth listener");
+
     let isAdmin = false;
 
     onAuthStateChanged(auth, async (user) => {
@@ -167,12 +175,13 @@ if (bookTable) {
 
         const addBookLink = document.getElementById("add-book-link");
 
-        if (!isAdmin && addBookLink) {
-            addBookLink.style.display = "none";
+        if (addBookLink && isAdmin) {
+            addBookLink.style.display = "block";
         }
-
         displayBooks(books);
     });
+
+    console.log("Auth listener registered");
 
     const input = document.getElementById("search-input")
     const button = document.getElementById("search-button")
