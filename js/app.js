@@ -162,6 +162,7 @@ if (bookTable) {
         if (user) {
             const token = await user.getIdTokenResult();
             isAdmin = token.claims.admin === true;
+            console.log("Admin:", isAdmin);
         }
 
         const addBookLink = document.getElementById("add-book-link");
