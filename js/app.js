@@ -2,19 +2,9 @@ console.log("NEW APP.JS LOADED");
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {
-    getFirestore,
-    collection,
-    addDoc,
-    getDocs,
-    deleteDoc,
-    doc,
-    orderBy,
-    query,
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import {
     getAuth,
     onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js"
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyClEatbNjcmYC-ejxpjFIwmk1Ix3TX_oOU",
@@ -27,13 +17,14 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+
+const API_URL = "https://library-system-production-ca66.up.railway.app";
 
 const book = document.getElementById("book-title");
 const ddc = document.getElementById("ddc-number");
 const form = document.getElementById("add-book-form");
 const bookTable = document.getElementById("book-table");
-const recentbooks = document.getElementById("recent-books")
+const recentbooks = document.getElementById("recent-books");
 
 if (form) {
     form.addEventListener("submit", async function (event) {
@@ -89,20 +80,31 @@ if (form) {
 
         console.log(category);
 
-        await addDoc(collection(db, "books"), {
-            title: bookvalue,
-            ddc: ddcvalue,
-            category: category
+        await fetch(API_URL + "/api/books", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title: bookvalue,
+                call_number: ddcvalue,
+                category: category,
+                shelf: "A-1",
+                total_copies: 1,
+                available_copies: 1
+            })
         });
+
+        form.reset();
     });
 }
 
 console.log("Reached auth section");
 
-const response = await fetch("http://localhost:3000/api/books");
+const response = await fetch(API_URL + "/api/books");
 const books = await response.json();
 
-const totalbooks = document.getElementById("total-books")
+const totalbooks = document.getElementById("total-books");
 
 console.log("Number of books:", books.length);
 
@@ -117,36 +119,38 @@ function displayBooks(booksToDisplay) {
     });
 
     booksToDisplay.forEach((data) => {
+
         console.log("Displaying:", data);
 
-        let row = document.createElement("tr")
+        let row = document.createElement("tr");
 
-        let bookcell = document.createElement("td")
+        let bookcell = document.createElement("td");
         bookcell.textContent = data.title;
 
-        let ddccell = document.createElement("td")
+        let ddccell = document.createElement("td");
         ddccell.textContent = data.call_number;
 
-        let categorycell = document.createElement("td")
+        let categorycell = document.createElement("td");
         categorycell.textContent = data.category;
 
-        let shelfcell = document.createElement("td")
+        let shelfcell = document.createElement("td");
         shelfcell.textContent = data.shelf;
 
-        let totalcell = document.createElement("td")
+        let totalcell = document.createElement("td");
         totalcell.textContent = data.total_copies;
 
-        let availablecell = document.createElement("td")
+        let availablecell = document.createElement("td");
         availablecell.textContent = data.available_copies;
 
-        let actioncell = document.createElement("td")
+        let actioncell = document.createElement("td");
 
         if (isAdmin) {
+
             let deletebutton = document.createElement("button");
             deletebutton.innerHTML = "Delete";
 
             deletebutton.addEventListener("click", async function () {
-                await fetch("http://localhost:3000/api/books/" + data.id, {
+                await fetch(API_URL + "/api/books/" + data.id, {
                     method: "DELETE"
                 });
 
@@ -155,7 +159,9 @@ function displayBooks(booksToDisplay) {
 
             let editbutton = document.createElement("button");
             editbutton.innerHTML = "Edit";
+
             editbutton.addEventListener("click", async function () {
+
                 let newTitle = prompt("Enter new title:", data.title);
                 let newCallNumber = prompt("Enter new call number:", data.call_number);
                 let newCategory = prompt("Enter new category:", data.category);
@@ -163,9 +169,8 @@ function displayBooks(booksToDisplay) {
                 let newTotal = prompt("Enter total copies:", data.total_copies);
                 let newAvailable = prompt("Enter available copies:", data.available_copies);
 
-
                 await fetch(
-                    "http://localhost:3000/api/books/" + data.id,
+                    API_URL + "/api/books/" + data.id,
                     {
                         method: "PUT",
                         headers: {
@@ -180,7 +185,8 @@ function displayBooks(booksToDisplay) {
                             available_copies: newAvailable
                         })
                     }
-                )
+                );
+
                 data.title = newTitle;
                 data.category = newCategory;
                 data.call_number = newCallNumber;
@@ -192,11 +198,17 @@ function displayBooks(booksToDisplay) {
             });
 
             let copiesbutton = document.createElement("button");
-            copiesbutton.textContent = "Update Copies"
+            copiesbutton.textContent = "Update Copies";
+
             copiesbutton.addEventListener("click", async function () {
-                let newAvailable = prompt("Enter available copies:", data.available_copies);
+
+                let newAvailable = prompt(
+                    "Enter available copies:",
+                    data.available_copies
+                );
+
                 await fetch(
-                    "http://localhost:3000/api/books/" + data.id + "/available",
+                    API_URL + "/api/books/" + data.id + "/available",
                     {
                         method: "PUT",
                         headers: {
@@ -206,7 +218,8 @@ function displayBooks(booksToDisplay) {
                             available_copies: newAvailable
                         })
                     }
-                )
+                );
+
                 data.available_copies = newAvailable;
                 displayBooks(books);
             });
@@ -225,26 +238,27 @@ function displayBooks(booksToDisplay) {
         row.appendChild(actioncell);
         bookTable.appendChild(row);
     });
-
 }
 
-
 if (bookTable) {
+
     console.log("Book table found:", bookTable);
 
-    const input = document.getElementById("search-input")
-    const button = document.getElementById("search-button")
+    const input = document.getElementById("search-input");
+    const button = document.getElementById("search-button");
 
     button.addEventListener("click", (event) => {
-        let inputvalue = input.value.toLowerCase()
+
+        let inputvalue = input.value.toLowerCase();
+
         const filteredBooks = books.filter((book) => {
             return book.title.toLowerCase().includes(inputvalue) ||
                 book.call_number.toLowerCase().includes(inputvalue) ||
-                book.category.toLowerCase().includes(inputvalue)
-        })
-        displayBooks(filteredBooks);
-    })
+                book.category.toLowerCase().includes(inputvalue);
+        });
 
+        displayBooks(filteredBooks);
+    });
 }
 
 console.log("About to start auth listener");
@@ -252,6 +266,7 @@ console.log("About to start auth listener");
 let isAdmin = false;
 
 onAuthStateChanged(auth, async (user) => {
+
     if (user) {
         const token = await user.getIdTokenResult();
         isAdmin = token.claims.admin === true;
@@ -263,6 +278,7 @@ onAuthStateChanged(auth, async (user) => {
     if (addBookLink && isAdmin) {
         addBookLink.style.display = "block";
     }
+
     if (bookTable) {
         displayBooks(books);
     }
