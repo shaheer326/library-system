@@ -97,91 +97,140 @@ if (form) {
     });
 }
 
-const bookQuery = query(collection(db, "books"), orderBy("ddc"))
-
-const booksSnapshot = await getDocs(bookQuery);
-
 console.log("Reached auth section");
+
+const response = await fetch("http://localhost:3000/api/books");
+const books = await response.json();
 
 const totalbooks = document.getElementById("total-books")
 
-console.log("Number of books:", booksSnapshot.size);
+console.log("Number of books:", books.length);
 
 if (totalbooks) {
-    totalbooks.textContent = booksSnapshot.size
+    totalbooks.textContent = books.length;
 }
 
-const books = [];
+function displayBooks(booksToDisplay) {
 
-booksSnapshot.forEach((doc) => {
-    books.push({ id: doc.id, ...doc.data() });
-});
+    bookTable.querySelectorAll("tr:not(:first-child)").forEach((row) => {
+        row.remove();
+    });
+
+    booksToDisplay.forEach((data) => {
+        console.log("Displaying:", data);
+
+        let row = document.createElement("tr")
+
+        let bookcell = document.createElement("td")
+        bookcell.textContent = data.title;
+
+        let ddccell = document.createElement("td")
+        ddccell.textContent = data.call_number;
+
+        let categorycell = document.createElement("td")
+        categorycell.textContent = data.category;
+
+        let shelfcell = document.createElement("td")
+        shelfcell.textContent = data.shelf;
+
+        let totalcell = document.createElement("td")
+        totalcell.textContent = data.total_copies;
+
+        let availablecell = document.createElement("td")
+        availablecell.textContent = data.available_copies;
+
+        let actioncell = document.createElement("td")
+
+        if (isAdmin) {
+            let deletebutton = document.createElement("button");
+            deletebutton.innerHTML = "Delete";
+
+            deletebutton.addEventListener("click", async function () {
+                await fetch("http://localhost:3000/api/books/" + data.id, {
+                    method: "DELETE"
+                });
+
+                row.remove();
+            });
+
+            let editbutton = document.createElement("button");
+            editbutton.innerHTML = "Edit";
+            editbutton.addEventListener("click", async function () {
+                let newTitle = prompt("Enter new title:", data.title);
+                let newCallNumber = prompt("Enter new call number:", data.call_number);
+                let newCategory = prompt("Enter new category:", data.category);
+                let newShelf = prompt("Enter new shelf:", data.shelf);
+                let newTotal = prompt("Enter total copies:", data.total_copies);
+                let newAvailable = prompt("Enter available copies:", data.available_copies);
+
+
+                await fetch(
+                    "http://localhost:3000/api/books/" + data.id,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            title: newTitle,
+                            call_number: newCallNumber,
+                            category: newCategory,
+                            shelf: newShelf,
+                            total_copies: newTotal,
+                            available_copies: newAvailable
+                        })
+                    }
+                )
+                data.title = newTitle;
+                data.category = newCategory;
+                data.call_number = newCallNumber;
+                data.shelf = newShelf;
+                data.total_copies = newTotal;
+                data.available_copies = newAvailable;
+
+                displayBooks(books);
+            });
+
+            let copiesbutton = document.createElement("button");
+            copiesbutton.textContent = "Update Copies"
+            copiesbutton.addEventListener("click", async function () {
+                let newAvailable = prompt("Enter available copies:", data.available_copies);
+                await fetch(
+                    "http://localhost:3000/api/books/" + data.id + "/available",
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            available_copies: newAvailable
+                        })
+                    }
+                )
+                data.available_copies = newAvailable;
+                displayBooks(books);
+            });
+
+            actioncell.appendChild(copiesbutton);
+            actioncell.appendChild(editbutton);
+            actioncell.appendChild(deletebutton);
+        }
+
+        row.appendChild(bookcell);
+        row.appendChild(ddccell);
+        row.appendChild(categorycell);
+        row.appendChild(shelfcell);
+        row.appendChild(totalcell);
+        row.appendChild(availablecell);
+        row.appendChild(actioncell);
+        bookTable.appendChild(row);
+    });
+
+}
 
 
 if (bookTable) {
     console.log("Book table found:", bookTable);
-
-    function displayBooks(booksToDisplay) {
-
-        bookTable.querySelectorAll("tr:not(:first-child)").forEach((row) => {
-            row.remove();
-        });
-
-        booksToDisplay.forEach((data) => {
-            console.log("Displaying:", data);
-
-            let row = document.createElement("tr")
-
-            let bookcell = document.createElement("td")
-            bookcell.textContent = data.title;
-
-            let ddccell = document.createElement("td")
-            ddccell.textContent = data.ddc;
-
-            let categorycell = document.createElement("td")
-            categorycell.textContent = data.category;
-
-            let actioncell = document.createElement("td")
-
-            if (isAdmin) {
-                let deletebutton = document.createElement("button");
-                deletebutton.innerHTML = "Delete";
-                deletebutton.addEventListener("click", async function () {
-                    await deleteDoc(doc(db, "books", data.id));
-                    row.remove()
-                });
-                actioncell.appendChild(deletebutton);
-            }
-
-            row.appendChild(bookcell);
-            row.appendChild(ddccell);
-            row.appendChild(categorycell);
-            row.appendChild(actioncell);
-            bookTable.appendChild(row);
-        });
-
-    }
-
-    console.log("About to start auth listener");
-
-    let isAdmin = false;
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const token = await user.getIdTokenResult();
-            isAdmin = token.claims.admin === true;
-            console.log("Admin:", isAdmin);
-        }
-
-        const addBookLink = document.getElementById("add-book-link");
-
-        if (addBookLink && isAdmin) {
-            addBookLink.style.display = "block";
-        }
-        displayBooks(books);
-    });
-
-    console.log("Auth listener registered");
 
     const input = document.getElementById("search-input")
     const button = document.getElementById("search-button")
@@ -190,13 +239,37 @@ if (bookTable) {
         let inputvalue = input.value.toLowerCase()
         const filteredBooks = books.filter((book) => {
             return book.title.toLowerCase().includes(inputvalue) ||
-                book.ddc.toLowerCase().includes(inputvalue) ||
+                book.call_number.toLowerCase().includes(inputvalue) ||
                 book.category.toLowerCase().includes(inputvalue)
         })
         displayBooks(filteredBooks);
     })
 
 }
+
+console.log("About to start auth listener");
+
+let isAdmin = false;
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const token = await user.getIdTokenResult();
+        isAdmin = token.claims.admin === true;
+        console.log("Admin:", isAdmin);
+    }
+
+    const addBookLink = document.getElementById("add-book-link");
+
+    if (addBookLink && isAdmin) {
+        addBookLink.style.display = "block";
+    }
+    if (bookTable) {
+        displayBooks(books);
+    }
+});
+
+console.log("Auth listener registered");
+
 if (recentbooks) {
     books.slice(0, 5).forEach((data) => {
 
@@ -206,7 +279,7 @@ if (recentbooks) {
         recenttitle.textContent = data.title;
 
         let recentddc = document.createElement("td");
-        recentddc.textContent = data.ddc;
+        recentddc.textContent = data.call_number;
 
         let recentcategory = document.createElement("td");
         recentcategory.textContent = data.category;
