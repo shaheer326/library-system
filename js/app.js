@@ -22,6 +22,9 @@ const API_URL = "https://library-system-production-ca66.up.railway.app";
 
 const book = document.getElementById("book-title");
 const ddc = document.getElementById("ddc-number");
+const shelf = document.getElementById("book-shelf");
+const totalCopies = document.getElementById("total-copies");
+const availableCopies = document.getElementById("available-copies");
 const form = document.getElementById("add-book-form");
 const bookTable = document.getElementById("book-table");
 const recentbooks = document.getElementById("recent-books");
@@ -32,6 +35,9 @@ if (form) {
 
         let bookvalue = book.value;
         let ddcvalue = ddc.value;
+        let shelfvalue = shelf.value;
+        let totalvalue = totalCopies.value;
+        let availablevalue = availableCopies.value;
 
         console.log(bookvalue);
         console.log(ddcvalue);
@@ -88,10 +94,9 @@ if (form) {
             body: JSON.stringify({
                 title: bookvalue,
                 call_number: ddcvalue,
-                category: category,
-                shelf: "A-1",
-                total_copies: 1,
-                available_copies: 1
+                shelf: shelfvalue,
+                total_copies: totalvalue,
+                available_copies: availablevalue
             })
         });
 
