@@ -108,6 +108,12 @@ console.log("Reached auth section");
 
 const response = await fetch(API_URL + "/api/books");
 const books = await response.json();
+books.sort((a, b) => {
+    const numA = parseFloat(a.call_number);
+    const numB = parseFloat(b.call_number);
+
+    return numA - numB;
+});
 
 const totalbooks = document.getElementById("total-books");
 
