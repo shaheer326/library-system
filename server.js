@@ -27,7 +27,7 @@ db.connect((err) => {
 app.get("/api/books", (req, res) => {
 
     db.query(
-        "SELECT * FROM books ORDER BY call_number ASC",
+        "SELECT * FROM books ORDER BY CAST(SUBSTRING_INDEX(call_number, ' ', 1) AS DECIMAL(10,4)) ASC",
         (err, results) => {
 
             if (err) {
