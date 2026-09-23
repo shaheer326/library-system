@@ -27,7 +27,7 @@ db.connect((err) => {
 app.get("/api/books", (req, res) => {
 
     db.query(
-        "SELECT * FROM books ORDER BY id DESC",
+        "SELECT * FROM books ORDER BY call_number ASC",
         (err, results) => {
 
             if (err) {
